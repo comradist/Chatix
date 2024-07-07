@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Chatix.Service.App.API.Presentation\Chatix.Service.App.API.Presentation.csproj" />
+    <ProjectReference Include="..\..\Chatix.Libs.Infrastructure\Chatix.Libs.Infrastructure.Persistence\Chatix.Libs.Infrastructure.Persistence.csproj" />
+    <ProjectReference Include="..\..\Chatix.Libs.Infrastructure\Chatix.Libs.Infrastructure.Logger\Chatix.Libs.Infrastructure.Logger.csproj" />
+  </ItemGroup>
+
+</Project>
