@@ -8,9 +8,9 @@ public class User : BaseEntity
 
     public string? LastName { get; set; }
 
-    public ICollection<RoomUser>? UserRooms { get; set; }
+    public ICollection<RoomUser>? UserRooms { get; set; } = [];
 
-    public ICollection<Room>? CreatedRooms { get; set; }
+    public ICollection<Room>? CreatedRooms { get; set; } = [];
 
-    public ICollection<Message>? Messages { get; set; }
+    public ICollection<Message>? Messages { get; set; } = [];
 }

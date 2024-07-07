@@ -10,7 +10,7 @@ public class Room : BaseEntity
     
     public User Admin { get; set; }
 
-    public ICollection<RoomUser>? UserRooms { get; set; }
+    public ICollection<RoomUser>? UserRooms { get; set; } = [];
 
-    public ICollection<Message>? Messages { get; set; }
+    public ICollection<Message>? Messages { get; set; } = [];
 }

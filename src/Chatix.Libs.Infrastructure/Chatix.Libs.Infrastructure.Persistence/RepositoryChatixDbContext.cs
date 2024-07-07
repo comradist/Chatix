@@ -50,6 +50,21 @@ public class RepositoryChatixDbContext : DbContext
             .WithMany(u => u.CreatedRooms)
             .HasForeignKey(r => r.AdminId);
 
+
+        modelBuilder.Entity<User>()
+            .Navigation(u => u.CreatedRooms).AutoInclude();
+        modelBuilder.Entity<User>()
+            .Navigation(u => u.Messages).AutoInclude();
+        modelBuilder.Entity<User>()
+            .Navigation(u => u.UserRooms).AutoInclude();
+
+        modelBuilder.Entity<Room>()
+            .Navigation(r => r.Messages).AutoInclude();
+        modelBuilder.Entity<Room>()
+            .Navigation(r => r.UserRooms).AutoInclude();
+
+
+
         base.OnModelCreating(modelBuilder);
 
     }

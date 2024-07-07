@@ -2,6 +2,7 @@ using Chatix.Libs.Infrastructure.Persistence;
 using Chatix.Libs.Infrastructure.Logger;
 using Chatix.Service.App.Domain;
 using Chatix.Service.App.API.Extensions;
+using Chatix.Service.App.API.Presentation.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 
 builder.Services.ConfigureValidationFilterAttribute();
 
+builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -51,5 +53,7 @@ app.UseCors("CorsPolicy");
 //app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chathub");
+
 
 app.Run();
