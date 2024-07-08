@@ -13,12 +13,15 @@ public class RepositoryManager : IRepositoryManager
 
     private readonly Lazy<IUserRepository> userRepository;
 
+    private readonly Lazy<IRoomUserRepository> roomUserRepository;
+
     public RepositoryManager(RepositoryChatixDbContext repositoryContext)
     {
         this.repositoryContext = repositoryContext;
         roomRepository = new Lazy<IRoomRepository>(() => new RoomRepository(repositoryContext));
         messageRepository = new Lazy<IMessageRepository>(() => new MessageRepository(repositoryContext));
         userRepository = new Lazy<IUserRepository>(() => new UserRepository(repositoryContext));
+        roomUserRepository = new Lazy<IRoomUserRepository>(() => new RoomUserRepository(repositoryContext));
     }
     
     public IRoomRepository Room => roomRepository.Value;
@@ -26,6 +29,8 @@ public class RepositoryManager : IRepositoryManager
     public IMessageRepository Message => messageRepository.Value;
 
     public IUserRepository User => userRepository.Value;
+
+    public IRoomUserRepository RoomUser => roomUserRepository.Value;
 
     public async Task SaveChangesAsync()
     {

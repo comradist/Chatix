@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference
-      Include="..\..\Chatix.Libs.Core\Chatix.Libs.Core.Contracts\Chatix.Libs.Core.Contracts.csproj" />
+    <ProjectReference Include="..\..\Chatix.Libs.Core\Chatix.Libs.Core.Contracts\Chatix.Libs.Core.Contracts.csproj" />
+    <ProjectReference Include="..\..\Chatix.Libs.Core\Chatix.Libs.Core.Models\Chatix.Libs.Core.Models.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

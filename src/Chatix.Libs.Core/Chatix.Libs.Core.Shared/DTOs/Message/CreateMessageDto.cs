@@ -4,9 +4,9 @@ public class CreateMessageDto
 {
     public string Content { get; set; }
 
-    public DateTime? SentAt { get; set; }
+    public DateTime? SentAt { get; set; } = DateTime.Now;
 
-    public Guid Sender { get; set; }
+    public Guid SenderId { get; set; }
 
-    public Guid ToRoom { get; set; }
+    public Guid ToRoomId { get; set; }
 }

@@ -1,4 +1,4 @@
-using Chatix.Libs.Core.Models.Entities.Chatix;
+using Chatix.Libs.Core.Models.Entities;
 
 namespace Chatix.Libs.Core.Contracts.Persistence;
 

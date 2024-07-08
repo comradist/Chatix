@@ -10,5 +10,7 @@ public interface IRepositoryManager
 
     IMessageRepository Message { get; }
 
+    IRoomUserRepository RoomUser { get; }
+
     Task SaveChangesAsync();
 }

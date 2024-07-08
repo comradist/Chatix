@@ -1,5 +1,5 @@
 using Chatix.Libs.Core.Contracts.Persistence;
-using Chatix.Libs.Core.Models.Entities.Chatix;
+using Chatix.Libs.Core.Models.Entities;
 using Chatix.Libs.Infrastructure.Persistence;
 using Chatix.Libs.Infrastructure.Persistence.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +16,9 @@ public class UserRepository : GenericRepositoryManager<User, Guid>, IUserReposit
     public async Task<User> GetUserByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(x => x.Id.Equals(id), trackChanges)
+                .Include(x => x.RoomUsers)
+                .Include(x => x.CreatedRooms)
+                .Include(x => x.Messages)
                 .FirstOrDefaultAsync();
     }
 

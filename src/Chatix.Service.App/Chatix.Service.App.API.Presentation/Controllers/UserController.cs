@@ -3,8 +3,8 @@ using Chatix.Libs.Core.Contracts.Logger;
 using Chatix.Libs.Core.Shared.DTOs.User;
 using Chatix.Service.App.API.Presentation.ActionFilters;
 using Chatix.Service.App.API.Presentation.Hubs;
-using Chatix.Service.App.Domain.Features.User.Requests.Commands;
-using Chatix.Service.App.Domain.Features.User.Requests.Queries;
+using Chatix.Service.App.Domain.Features.Users.Requests.Commands;
+using Chatix.Service.App.Domain.Features.Users.Requests.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +18,6 @@ namespace Chatix.Service.App.API.Presentation.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IMediator mediator;
-
 
     private readonly IHubContext<ChatHub> hubContext;
 

@@ -1,7 +1,8 @@
-using Chatix.Libs.Core.Shared.DTOs.Message;
-using Chatix.Libs.Core.Shared.DTOs.User;
-using Chatix.Service.App.Domain.Features.User.Handlers.Commands;
-using Chatix.Service.App.Domain.Features.User.Requests.Commands;
+using AutoMapper;
+using Chatix.Libs.Core.Contracts.Logger;
+using Chatix.Libs.Core.Models.Entities;
+using Chatix.Service.App.Domain.Features.Rooms.Requests.Queries;
+using Chatix.Service.App.Domain.Features.Users.Requests.Queries;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
@@ -9,38 +10,87 @@ namespace Chatix.Service.App.API.Presentation.Hubs;
 
 public class ChatHub : Hub
 {
-    private readonly IMediator _mediator;
 
-    public ChatHub(IMediator mediator)
+    private readonly IMediator mediator;
+    private readonly ILoggerManager logger;
+    private readonly IMapper mapper;
+    private static readonly Dictionary<string, (Guid UserId, Guid RoomId)> Connections = new();
+
+    public ChatHub(IMediator mediator, ILoggerManager logger, IMapper mapper)
     {
-        _mediator = mediator;
+        this.mediator = mediator;
+        this.logger = logger;
+        this.mapper = mapper;
     }
 
-    public async Task CreateUser(string createUserDto)
+    public async Task SendPrivateMessage(Guid userId, string message)
     {
-        var user = await _mediator.Send(new CreateUserCommand { UserDto = new CreateUserDto { LastName = createUserDto } });
-
-        await Clients.Caller.SendAsync("ReceiveUser", user);
+        var connection = Connections.FirstOrDefault(c => c.Value.UserId == userId);
+        if (connection.Key != null)
+        {
+            await Clients.Client(connection.Key).SendAsync("ReceivePrivateMessage", message);
+        }
+        else
+        {
+            await Clients.Caller.SendAsync("onError", "User not found or not connected");
+        }
     }
 
-    // public async Task SendMessage(MessageDto sendMessageDto)
-    // {
-    //     var message = await _mediator.Send(new  { SendMessageDto = sendMessageDto });
+    public async Task Join(RoomUser roomUser)
+    {
+        try
+        {
+            var user = await mediator.Send(new GetUserByIdRequest { Id = roomUser.UserId }) ?? throw new Exception("User not found");
+            var room = await mediator.Send(new GetRoomByIdRequest { Id = roomUser.RoomId }) ?? throw new Exception("Room not found");
 
-    //     await Clients.Group(sendMessageDto.RoomId.ToString()).SendAsync("ReceiveMessage", message);
-    // }
+            // Add user connection mapping
+            Connections.Add(Context.ConnectionId, (user.Id, room.Id));
 
-    // public async Task JoinRoom(Guid roomId)
-    // {
-    //     await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());
-
-    //     var messages = await _mediator.Send(new GetMessagesByRoomIdQuery { RoomId = roomId });
-
-    //     await Clients.Caller.SendAsync("ReceiveMessages", messages);
-    // }
+            await Groups.AddToGroupAsync(Context.ConnectionId, room.Id.ToString());
+            await Clients.Group(room.Id.ToString()).SendAsync("addUser", user.Id ,$"{user.FirstName + " " + user.LastName} joined the chat room!");
+        }
+        catch (Exception ex)
+        {
+            await Clients.Caller.SendAsync("onError", "You failed to join the chat room!" + ex.Message);
+        }
+    }
 
     public async Task LeaveRoom(Guid roomId)
     {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId.ToString());
+        if (Connections.TryGetValue(Context.ConnectionId, out var userRoom))
+        {
+            if (userRoom.RoomId == roomId)
+            {
+                var room = await mediator.Send(new GetRoomByIdRequest { Id = roomId });
+                if (room != null)
+                {
+                    // Remove the user from the group
+                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.Id.ToString());
+                    await Clients.Group(room.Id.ToString()).SendAsync("removeUser", userRoom.UserId);
+
+                    // Remove the connection mapping
+                    Connections.Remove(Context.ConnectionId);
+                }
+            }
+        }
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        if (Connections.TryGetValue(Context.ConnectionId, out var userRoom))
+        {
+            var room = await mediator.Send(new GetRoomByIdRequest { Id = userRoom.RoomId });
+            if (room != null)
+            {
+                // Remove the user from the group
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.Id.ToString());
+                await Clients.Group(room.Id.ToString()).SendAsync("removeUser", userRoom.UserId);
+            }
+
+            // Remove the connection mapping
+            Connections.Remove(Context.ConnectionId);
+        }
+
+        await base.OnDisconnectedAsync(exception);
     }
 }

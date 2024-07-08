@@ -41,4 +41,14 @@ public abstract class GenericRepositoryManager<T, K> : RepositoryBase<T>, IGener
         Delete(entity);
         await SaveChangesAsync();
     }
+
+    public void Attach(T entity)
+    {
+        base.Attach(entity);
+    }
+
+    public void Detach(T entity)
+    {
+        base.Detach(entity);
+    }
 }

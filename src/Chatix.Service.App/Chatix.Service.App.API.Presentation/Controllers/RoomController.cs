@@ -1,10 +1,11 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Chatix.Libs.Core.Contracts.Logger;
 using Chatix.Libs.Core.Shared.DTOs.Room;
 using Chatix.Service.App.API.Presentation.ActionFilters;
 using Chatix.Service.App.API.Presentation.Hubs;
-using Chatix.Service.App.Domain.Features.Room.Requests.Commands;
-using Chatix.Service.App.Domain.Features.Room.Requests.Queries;
+using Chatix.Service.App.Domain.Features.Rooms.Requests.Commands;
+using Chatix.Service.App.Domain.Features.Rooms.Requests.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,6 @@ namespace Chatix.Service.App.API.Presentation.Controllers;
 public class RoomController : ControllerBase
 {
     private readonly IMediator mediator;
-
 
     private readonly IHubContext<ChatHub> hubContext;
 
@@ -65,8 +65,9 @@ public class RoomController : ControllerBase
     public async Task<ActionResult<RoomDto>> CreateRoom([FromBody] CreateRoomDto createRoomDto)
     {
         var roomDto = await mediator.Send(new CreateRoomCommand { RoomDto = createRoomDto });
-        
-        await hubContext.Clients.All.SendAsync("ReceiveRoom", JsonSerializer.Serialize(roomDto));
+
+        await hubContext.Clients.All.SendAsync("addChatRoom", JsonSerializer.Serialize(roomDto, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles }));
+
         return CreatedAtRoute("GetRoom", new { roomDto.Id }, roomDto);
     }
 
@@ -80,17 +81,21 @@ public class RoomController : ControllerBase
     {
         await mediator.Send(new UpdateRoomCommand { UpdateRoomDto = updateRoomDto });
 
+        //await hubContext.Clients.All.SendAsync("addChatRoom", JsonSerializer.Serialize(roomDto, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles }));
+
         return NoContent();
     }
 
-    [HttpDelete("{id:Guid}")]
+    [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> DeleteRoom(DeleteRoomDto deleteRoomDto)
+    public async Task<IActionResult> DeleteRoom([FromBody] DeleteRoomDto deleteRoomDto)
     {
-        await mediator.Send(new DeleteRoomCommand { deleteRoomDto = deleteRoomDto });
+        var deletedRoom = await mediator.Send(new DeleteRoomCommand { deleteRoomDto = deleteRoomDto });
+
+        await hubContext.Clients.All.SendAsync("LeaveRoom", deletedRoom.Id, deletedRoom.Admin.Id);
 
         return NoContent();
     }

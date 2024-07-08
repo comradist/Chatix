@@ -44,4 +44,18 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
         await repositoryAppDbContext.SaveChangesAsync();
     }
 
+    public void Attach(T entity)
+    {
+        repositoryAppDbContext.Set<T>().Attach(entity);
+    }
+
+    public void Detach(T entity)
+    {
+        var entry = repositoryAppDbContext.Entry(entity);
+        if (entry != null)
+        {
+            entry.State = EntityState.Detached;
+        }
+    }
+
 }

@@ -1,10 +1,11 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Chatix.Libs.Core.Contracts.Logger;
 using Chatix.Libs.Core.Shared.DTOs.Message;
 using Chatix.Service.App.API.Presentation.ActionFilters;
 using Chatix.Service.App.API.Presentation.Hubs;
-using Chatix.Service.App.Domain.Features.Message.Requests.Commands;
-using Chatix.Service.App.Domain.Features.Message.Requests.Queries;
+using Chatix.Service.App.Domain.Features.Messages.Requests.Commands;
+using Chatix.Service.App.Domain.Features.Messages.Requests.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -65,8 +66,15 @@ public class MessageController : ControllerBase
     public async Task<ActionResult<MessageDto>> CreateMessage([FromBody] CreateMessageDto createMessageDto)
     {
         var messageDto = await mediator.Send(new CreateMessageCommand { MessageDto = createMessageDto });
-        
-        await hubContext.Clients.All.SendAsync("ReceiveMessage", JsonSerializer.Serialize(messageDto));
+
+        var options = new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            WriteIndented = true
+        };
+
+        await hubContext.Clients.Group(messageDto.ToRoomId.ToString()).SendAsync("sendMessage", JsonSerializer.Serialize(messageDto, options));
+        //await hubContext.Clients.All.SendAsync("ReceiveMessage", JsonSerializer.Serialize(messageDto, options));
         return CreatedAtRoute("GetMessage", new { messageDto.Id }, messageDto);
     }
 

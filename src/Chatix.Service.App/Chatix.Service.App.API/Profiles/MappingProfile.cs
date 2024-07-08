@@ -1,5 +1,5 @@
 using AutoMapper;
-using Chatix.Libs.Core.Models.Entities.Chatix;
+using Chatix.Libs.Core.Models.Entities;
 using Chatix.Libs.Core.Shared.DTOs.Message;
 using Chatix.Libs.Core.Shared.DTOs.Room;
 using Chatix.Libs.Core.Shared.DTOs.User;

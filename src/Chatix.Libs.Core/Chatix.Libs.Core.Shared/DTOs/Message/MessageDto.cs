@@ -8,9 +8,9 @@ public class MessageDto : BaseDto
 {
     public string Content { get; set; }
 
-    public DateTime SentAt { get; set; }
+    public DateTime? SentAt { get; set; }
 
-    public UserDto Sender { get; set; }
+    public Guid SenderId { get; set; }
 
-    public RoomDto ToRoom { get; set; }
+    public Guid ToRoomId { get; set; }
 }

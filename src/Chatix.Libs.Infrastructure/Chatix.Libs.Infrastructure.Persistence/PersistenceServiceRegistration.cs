@@ -14,7 +14,10 @@ public static class PersistenceServiceRegistration
     {
         ConfigurationConStrToDbNote configurationConStrToDbNote = configuration.GetSection(ConfigurationConStrToDbNote.Key).Get<ConfigurationConStrToDbNote>();
         services.AddDbContext<RepositoryChatixDbContext>(options =>
-            options.UseMySql(configurationConStrToDbNote.SqlConnectionToAppDb, new MySqlServerVersion(new Version(8, 0, 26))));
+        {
+            options.EnableSensitiveDataLogging();
+            options.UseMySql(configurationConStrToDbNote.SqlConnectionToAppDb, new MySqlServerVersion(new Version(8, 0, 26)));
+        });
 
         services.AddScoped<IMessageRepository, MessageRepository>();
 

@@ -1,4 +1,4 @@
-﻿using Chatix.Libs.Core.Models.Entities.Chatix;
+﻿using Chatix.Libs.Core.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -27,41 +27,51 @@ public class RepositoryChatixDbContext : DbContext
 
         modelBuilder.Entity<RoomUser>()
             .HasOne(ru => ru.Room)
-            .WithMany(r => r.UserRooms)
-            .HasForeignKey(ru => ru.RoomId);
+            .WithMany(r => r.RoomUsers)
+            .HasForeignKey(ru => ru.RoomId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<RoomUser>()
             .HasOne(ru => ru.User)
-            .WithMany(u => u.UserRooms)
-            .HasForeignKey(ru => ru.UserId);
+            .WithMany(u => u.RoomUsers)
+            .HasForeignKey(ru => ru.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Message>()
             .HasOne(m => m.Sender)
             .WithMany(u => u.Messages)
-            .HasForeignKey(m => m.SenderId);
+            .HasForeignKey(m => m.SenderId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Message>()
             .HasOne(m => m.ToRoom)
             .WithMany(r => r.Messages)
-            .HasForeignKey(m => m.ToRoomId);
+            .HasForeignKey(m => m.ToRoomId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Room>()
             .HasOne(r => r.Admin)
             .WithMany(u => u.CreatedRooms)
-            .HasForeignKey(r => r.AdminId);
+            .HasForeignKey(r => r.AdminId)
+            .OnDelete(DeleteBehavior.Cascade);
 
 
-        modelBuilder.Entity<User>()
-            .Navigation(u => u.CreatedRooms).AutoInclude();
-        modelBuilder.Entity<User>()
-            .Navigation(u => u.Messages).AutoInclude();
-        modelBuilder.Entity<User>()
-            .Navigation(u => u.UserRooms).AutoInclude();
 
-        modelBuilder.Entity<Room>()
-            .Navigation(r => r.Messages).AutoInclude();
-        modelBuilder.Entity<Room>()
-            .Navigation(r => r.UserRooms).AutoInclude();
+
+        // modelBuilder.Entity<User>()
+        //     .Navigation(u => u.CreatedRooms).AutoInclude();
+        // modelBuilder.Entity<User>()
+        //     .Navigation(u => u.Messages).AutoInclude();
+        // modelBuilder.Entity<User>()
+        //     .Navigation(u => u.RoomUsers).AutoInclude();
+
+        // modelBuilder.Entity<Room>()
+        //     .Navigation(r => r.Messages).AutoInclude();
+        // modelBuilder.Entity<Room>()
+        //     .Navigation(r => r.RoomUsers).AutoInclude();
+        // modelBuilder.Entity<Room>()
+        //     .Navigation(r => r.Admin).AutoInclude();
+
 
 
 

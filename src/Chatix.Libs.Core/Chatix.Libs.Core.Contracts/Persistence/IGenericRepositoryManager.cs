@@ -17,5 +17,9 @@ public interface IGenericRepositoryManager<T, K>
     Task DeleteAsync(T entity);
 
     Task SaveChangesAsync();
+
+    void Attach(T entity);
+
+    void Detach(T entity);
 }
 
