@@ -98,7 +98,6 @@ public class MessageController : ControllerBase
     public async Task<IActionResult> DeleteMessage(Guid id)
     {
         await mediator.Send(new DeleteMessageCommand { Id = id });
-
         return NoContent();
     }
 }

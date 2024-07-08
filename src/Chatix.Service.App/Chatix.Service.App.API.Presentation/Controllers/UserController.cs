@@ -64,8 +64,7 @@ public class UserController : ControllerBase
     public async Task<ActionResult<UserDto>> CreateUser([FromBody] CreateUserDto createUserDto)
     {
         var userDto = await mediator.Send(new CreateUserCommand { UserDto = createUserDto });
-        
-        await hubContext.Clients.All.SendAsync("ReceiveUser", JsonSerializer.Serialize(userDto));
+
         return CreatedAtRoute("GetUser", new { userDto.Id }, userDto);
     }
 
@@ -88,6 +87,9 @@ public class UserController : ControllerBase
     [ProducesDefaultResponseType]
     public async Task<IActionResult> DeleteUser(Guid id)
     {
+
+        await hubContext.Clients.All.SendAsync("CloseRoomsByAdmin", id);
+
         await mediator.Send(new DeleteUserCommand { Id = id });
 
         return NoContent();

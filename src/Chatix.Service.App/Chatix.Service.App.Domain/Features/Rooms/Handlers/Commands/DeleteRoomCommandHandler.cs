@@ -27,9 +27,7 @@ public class DeleteRoomCommandHandler : IRequestHandler<DeleteRoomCommand, RoomD
             throw new Exception("You are not the admin of this room");
         }
 
-
         await repositoryManager.Room.DeleteAsync(room);
-
 
         var roomForReturn = mapper.Map<RoomDto>(room);
         return roomForReturn;

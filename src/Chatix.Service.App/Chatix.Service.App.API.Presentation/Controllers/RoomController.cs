@@ -66,8 +66,6 @@ public class RoomController : ControllerBase
     {
         var roomDto = await mediator.Send(new CreateRoomCommand { RoomDto = createRoomDto });
 
-        await hubContext.Clients.All.SendAsync("addChatRoom", JsonSerializer.Serialize(roomDto, new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.IgnoreCycles }));
-
         return CreatedAtRoute("GetRoom", new { roomDto.Id }, roomDto);
     }
 
@@ -93,9 +91,9 @@ public class RoomController : ControllerBase
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> DeleteRoom([FromBody] DeleteRoomDto deleteRoomDto)
     {
-        var deletedRoom = await mediator.Send(new DeleteRoomCommand { deleteRoomDto = deleteRoomDto });
+        await hubContext.Clients.Group(deleteRoomDto.Id.ToString()).SendAsync("CloseRoom", deleteRoomDto.Id, deleteRoomDto.SenderRequestId);
 
-        await hubContext.Clients.All.SendAsync("LeaveRoom", deletedRoom.Id, deletedRoom.Admin.Id);
+        await mediator.Send(new DeleteRoomCommand { deleteRoomDto = deleteRoomDto });
 
         return NoContent();
     }

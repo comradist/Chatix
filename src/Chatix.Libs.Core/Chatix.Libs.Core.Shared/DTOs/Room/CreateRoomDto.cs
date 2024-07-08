@@ -10,7 +10,4 @@ public class CreateRoomDto
 
     public Guid AdminId { get; set; }
 
-    public ICollection<UserDto>? UsersInRoom { get; set; }
-
-    public ICollection<MessageDto>? Messages { get; set; }
 }

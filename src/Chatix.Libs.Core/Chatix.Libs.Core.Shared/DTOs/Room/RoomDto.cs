@@ -1,3 +1,4 @@
+using Chatix.Libs.Core.Models.Entities;
 using Chatix.Libs.Core.Shared.DTOs.Common;
 using Chatix.Libs.Core.Shared.DTOs.Message;
 using Chatix.Libs.Core.Shared.DTOs.User;
@@ -10,8 +11,8 @@ public class RoomDto : BaseDto
 
     public UserDto Admin { get; set; }
 
-    public ICollection<UserDto>? UsersInRoom { get; set; }
-
     public ICollection<MessageDto>? Messages { get; set; }
+
+    public ICollection<RoomUser>? RoomUsers { get; set; }
 
 }

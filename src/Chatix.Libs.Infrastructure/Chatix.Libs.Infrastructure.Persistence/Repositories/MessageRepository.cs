@@ -16,6 +16,8 @@ public class MessageRepository : GenericRepositoryManager<Message, Guid>, IMessa
     public async Task<Message> GetMessageByIdAsync(Guid id, bool trackChanges)
     {
         return await FindByCondition(x => x.Id.Equals(id), trackChanges)
+                .Include(x => x.Sender)
+                .Include(x => x.ToRoom)
                 .FirstOrDefaultAsync();
     }
 

@@ -62,13 +62,13 @@ public class RepositoryChatixDbContext : DbContext
         //     .Navigation(u => u.CreatedRooms).AutoInclude();
         // modelBuilder.Entity<User>()
         //     .Navigation(u => u.Messages).AutoInclude();
-        // modelBuilder.Entity<User>()
-        //     .Navigation(u => u.RoomUsers).AutoInclude();
+        modelBuilder.Entity<User>()
+            .Navigation(u => u.RoomUsers).AutoInclude();
 
         // modelBuilder.Entity<Room>()
         //     .Navigation(r => r.Messages).AutoInclude();
-        // modelBuilder.Entity<Room>()
-        //     .Navigation(r => r.RoomUsers).AutoInclude();
+        modelBuilder.Entity<Room>()
+            .Navigation(r => r.RoomUsers).AutoInclude();
         // modelBuilder.Entity<Room>()
         //     .Navigation(r => r.Admin).AutoInclude();
 

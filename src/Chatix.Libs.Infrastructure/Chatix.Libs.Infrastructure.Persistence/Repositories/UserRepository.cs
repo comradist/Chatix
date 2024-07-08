@@ -17,7 +17,7 @@ public class UserRepository : GenericRepositoryManager<User, Guid>, IUserReposit
     {
         return await FindByCondition(x => x.Id.Equals(id), trackChanges)
                 .Include(x => x.RoomUsers)
-                .Include(x => x.CreatedRooms)
+                //.Include(x => x.CreatedRooms)
                 .Include(x => x.Messages)
                 .FirstOrDefaultAsync();
     }

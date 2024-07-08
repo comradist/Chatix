@@ -12,8 +12,6 @@ public class UpdateRoomDto : BaseDto
 
     public Guid AdminId { get; set; }
 
-    public ICollection<UserDto>? UsersInRoom { get; set; }
-
     public ICollection<MessageDto>? Messages { get; set; }
 
     public ICollection<RoomUser>? RoomUsers { get; set; }

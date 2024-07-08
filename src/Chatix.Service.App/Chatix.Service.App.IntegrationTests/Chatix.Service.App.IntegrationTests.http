@@ -1,0 +1,6 @@
+@Chatix.Service.App.IntegrationTests_HostAddress = http://localhost:5045
+
+GET {{Chatix.Service.App.IntegrationTests_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
