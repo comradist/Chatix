@@ -18,9 +18,9 @@ public class DeleteMessageCommandHandler : IRequestHandler<DeleteMessageCommand,
 
     public async Task<Unit> Handle(DeleteMessageCommand request, CancellationToken cancellationToken)
     {
-        var Message = await repositoryManager.Message.GetMessageByIdAsync(request.Id, false) ?? throw new Exception("Message not found");
+        var message = await repositoryManager.Message.GetMessageByIdAsync(request.Id, false) ?? throw new Exception("Message not found");
 
-        await repositoryManager.Message.DeleteAsync(Message);
+        await repositoryManager.Message.DeleteAsync(message);
 
         return Unit.Value;
     }

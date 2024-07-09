@@ -1,4 +1,6 @@
+
 using Chatix.Libs.Infrastructure.Persistence;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 public partial class Program
 {
@@ -6,17 +8,13 @@ public partial class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container
         builder.Services.AddControllers();
 
-        // Add DbContext with configuration from appsettings.json
         builder.Services.AddDbContext<RepositoryChatixDbContext>(options =>
-            options.UseMySql(builder.Configuration.GetConnectionString("SqlConnectionToAppDb"), new MySqlServerVersion(new Version(8, 0, 26))));
+            options.UseInMemoryDatabase("InMemoryDbForTesting"));
 
-        // Register other services here (e.g., MediatR, SignalR, etc.)
-        // builder.Services.AddMediatR(typeof(Program).Assembly);
-        // builder.Services.AddSignalR();
-        // builder.Services.AddScoped<ILoggerManager, LoggerManager>();
+        builder.Services.AddMediatR(typeof(Program).Assembly);
+        builder.Services.AddSignalR();
 
         var app = builder.Build();
 

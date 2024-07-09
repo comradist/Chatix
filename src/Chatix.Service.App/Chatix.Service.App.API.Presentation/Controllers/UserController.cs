@@ -87,7 +87,6 @@ public class UserController : ControllerBase
     [ProducesDefaultResponseType]
     public async Task<IActionResult> DeleteUser(Guid id)
     {
-
         await hubContext.Clients.All.SendAsync("CloseRoomsByAdmin", id);
 
         await mediator.Send(new DeleteUserCommand { Id = id });
